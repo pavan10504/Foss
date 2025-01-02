@@ -34,6 +34,7 @@ function App() {
               <SignedIn>
                 <Layout>
                   <Routes>
+                  <Route path="/" element={<Navigate to="/home" replace />} />
                     <Route path="/home" element={<Home />} />
                     <Route path="/quiz" element={<Quiz />} />
                     <Route path="/games" element={<Games />} />
