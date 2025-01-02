@@ -11,6 +11,7 @@ import Analytics from "./pages/Analytics";
 import SignInPage from "./pages/signin";
 import SignedOutHeader from "./pages/signedout";
 import SignUpPage from "./pages/signup";
+import { Navigate } from "react-router-dom";
 
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
