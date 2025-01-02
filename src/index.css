@@ -1,0 +1,52 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+:root {
+  --primary-color: #2563eb;
+  --secondary-color: #7c3aed;
+  --accent-color: #0d9488;
+}
+
+.dark {
+  --primary-color: #3b82f6;
+  --secondary-color: #8b5cf6;
+  --accent-color: #14b8a6;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-4 py-2 rounded-md transition duration-300;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700;
+  }
+
+  .btn-secondary {
+    @apply bg-purple-600 text-white hover:bg-purple-700;
+  }
+
+  .card {
+    @apply bg-white rounded-lg shadow-md overflow-hidden dark:bg-gray-800;
+  }
+}
+
+/* Glassmorphism effect */
+.glassmorphism {
+  @apply bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg;
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition-property: all;
+  transition-duration: 300ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
