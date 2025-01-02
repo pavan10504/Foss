@@ -13,12 +13,12 @@ export default function Sidebar() {
   const location = useLocation();
 
   return (
-    <div className="fixed top-20 left-4 z-30 h-[85vh] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
+    <div className="fixed top-[50%] translate-y-[-50.5%] left-2 z-30 h-[95%] bg-white dark:bg-gray-800 rounded-lg border-gray-200 dark:border-gray-700 shadow-lg group transition-all duration-300">
       {/* Sidebar Container */}
-      <div className="h-full w-16 hover:w-64 transition-all duration-300 group relative">
+      <div className="h-full w-16 group-hover:w-64 overflow-hidden transition-all duration-300">
         {/* Logo Section */}
         <div className="flex items-center justify-center py-4">
-          <span className="text-xl font-semibold text-gray-800 dark:text-white hidden group-hover:block">
+          <span className="text-sm font-semibold text-white dark:text-gray-800 group-hover:text-gray-800 group-hover:text-xl group-hover:dark:text-white">
             Edu Platform
           </span>
         </div>
@@ -36,6 +36,7 @@ export default function Sidebar() {
               }`}
             >
               <item.icon className="w-6 h-6" />
+              {/* Label is hidden by default and only visible on hover */}
               <span className="ml-4 hidden group-hover:block">{item.label}</span>
             </Link>
           ))}

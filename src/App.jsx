@@ -7,6 +7,8 @@ import Quiz from "./pages/Quiz";
 import Games from "./pages/Games";
 import Profile from "./pages/Profile";
 import Analytics from "./pages/Analytics";
+import SignInPage from "./pages/signin";
+import SignedOutHeader from "./pages/signedout";
 
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -20,8 +22,16 @@ function App() {
       <Router>
         <Routes>
           {/* Public Routes */}
-          <Route path="/sign-in/*" element={<SignIn />} />
+          <Route path="/sign-in/*" element={<SignInPage />} />
           <Route path="/sign-up/*" element={<SignUp />} />
+          <Route
+          path="*"
+          element={
+            <SignedOut>
+              <SignedOutHeader />
+          </SignedOut>
+          }
+        />
 
           {/* Protected Routes */}
           <Route
@@ -40,7 +50,6 @@ function App() {
               </SignedIn>
             }
           />
-          <Route path="*" element={<SignIn />} />
         </Routes>
       </Router>
     </ClerkProvider>

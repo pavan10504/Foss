@@ -11,7 +11,7 @@ function Header({ darkMode, setDarkMode }) {
                     <div className="flex items-center">
                         <button
                             onClick={() => setDarkMode(!darkMode)}
-                            className="p-2 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:hover:text-gray-300"
+                            className="p-2 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none dark:hover:text-gray-300"
                         >
                             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
                         </button>
