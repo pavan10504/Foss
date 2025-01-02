@@ -30,7 +30,7 @@ const data = {
 
 function AnalyticsChart() {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden p-6 dark:bg-gray-800">
+    <div className="w-1/2 h-1/2 bg-white rounded-lg shadow-md overflow-hidden p-6 dark:bg-gray-800">
       <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-white">Analytics</h2>
       <Bar options={options} data={data} />
     </div>
