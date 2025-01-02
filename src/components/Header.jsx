@@ -1,8 +1,11 @@
 ﻿import React from 'react'
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 import { Sun, Moon } from 'lucide-react'
+import { neobrutalism } from '@clerk/themes';
+import { useTheme } from './theme';
 
-function Header({ darkMode, setDarkMode }) {
+function Header() {
+    const { darkMode, setDarkMode } = useTheme();
     return (
         <header className="bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700">
             <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
@@ -17,10 +20,10 @@ function Header({ darkMode, setDarkMode }) {
                         </button>
                         <div className="ml-4">
                             <SignedOut>
-                                <SignInButton />
+                                <SignInButton appearance={neobrutalism}>Sign In</SignInButton>
                             </SignedOut>
                             <SignedIn>
-                                <UserButton />
+                                <UserButton afterSignOutRedirectUrl="/signed-out"/>
                             </SignedIn>
                         </div>
                     </div>

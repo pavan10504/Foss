@@ -4,7 +4,7 @@ import { neobrutalism } from "@clerk/themes";
 export default function SignInPage() {
     return (
         <div className="flex items-center justify-center h-screen">
-            <SignIn appearance={neobrutalism}/>
+            <SignIn appearance={neobrutalism} forceRedirectUrl={"/home"}/>
         </div>
     );
 }

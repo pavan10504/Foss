@@ -2,7 +2,7 @@
 import { Home, BookOpen, Gamepad, User, BarChart } from 'lucide-react';
 
 const navItems = [
-  { icon: Home, label: 'Dashboard', path: '/' },
+  { icon: Home, label: 'Dashboard', path: '/home' },
   { icon: BookOpen, label: 'Quiz', path: '/quiz' },
   { icon: Gamepad, label: 'Games', path: '/games' },
   { icon: User, label: 'Profile', path: '/profile' },

@@ -1,9 +1,11 @@
-﻿import React, { useState } from 'react';
+﻿import React from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import { ThemeContext } from './theme';
 
-function Layout({ children }) {
-  const [darkMode, setDarkMode] = useState(false);
+function LayoutContent({ children }) {
+  const { darkMode } = React.useContext(ThemeContext);
+  
   return (
     <div className={`min-h-screen flex dark:bg-gray-900 ${darkMode ? 'dark' : ''}`}>
       <div className="flex-1 dark:bg-gray-900">
@@ -14,11 +16,21 @@ function Layout({ children }) {
             dark:border-gray-700 shadow-inner"
           style={{ marginLeft: '4rem' }}
         >
-          <Header darkMode={darkMode} setDarkMode={setDarkMode}/>
+          <Header />
           {children}
         </main>
       </div>
     </div>
+  );
+}
+
+function Layout({ children }) {
+  const [darkMode, setDarkMode] = React.useState(false);
+  
+  return (
+    <ThemeContext.Provider value={{ darkMode, setDarkMode }}>
+      <LayoutContent>{children}</LayoutContent>
+    </ThemeContext.Provider>
   );
 }
 
