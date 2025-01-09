@@ -7,16 +7,16 @@ function LayoutContent({ children }) {
   const { darkMode } = React.useContext(ThemeContext);
   
   return (
-    <div className={`min-h-screen flex dark:bg-gray-900 ${darkMode ? 'dark' : ''}`}>
+    <div className={`min-h-screen flex bg-gray-100 border-none dark:bg-gray-900 ${darkMode ? 'dark' : ''}`}>
       <div className="flex-1 dark:bg-gray-900">
         <Sidebar className="h-full"/>
         <main
-          className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 dark:bg-gray-900
-            p-4 transition-all duration-300 rounded-lg lg:rounded-l-none lg:border-l lg:border-gray-200 
+          className="flex-1 overflow-x-hidden overflow-y-auto border-none bg-gray-100 dark:bg-gray-900
+            p-4 transition-all duration-300 rounded-lg lg:rounded-l-none lg:border-l 
             dark:border-gray-700 shadow-inner"
           style={{ marginLeft: '4rem' }}
         >
-          <Header />
+          <Header/>
           {children}
         </main>
       </div>

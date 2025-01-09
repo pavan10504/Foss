@@ -7,18 +7,18 @@ import { useTheme } from './theme';
 function Header() {
     const { darkMode, setDarkMode } = useTheme();
     return (
-        <header className="bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700">
+        <header className="bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700 mb-6">
             <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between">
                     <h1 className="text-xl font-bold text-gray-900 dark:text-white">SKILL QUEST</h1>
-                    <div className="flex items-center">
+                    <div className="flex items-center justify-center">
                         <button
                             onClick={() => setDarkMode(!darkMode)}
                             className="p-2 rounded-md text-gray-400 hover:text-gray-500 focus:outline-none dark:hover:text-gray-300"
                         >
                             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
                         </button>
-                        <div className="ml-4">
+                        <div className="ml-4 flex items-center justify-center">
                             <SignedOut>
                                 <SignInButton appearance={neobrutalism}>Sign In</SignInButton>
                             </SignedOut>

@@ -1,13 +1,36 @@
-﻿import React from 'react';
-import ProfileCard from '../components/ProfileCard';
-import QuizCard from '../components/QuizCard';
-import GameBadge from '../components/GameBadge';
-import AnalyticsChart from '../components/AnalyticsChart';
+﻿import React, { useState, useEffect } from 'react';
+import ProfileCard from '@/components/ProfileCard';
+import QuizCard from '@/components/QuizCard';
+import GameBadge from '@/components/GameBadge';
+import AnalyticsChart from '@/components/AnalyticsChart';
+import OnboardingFlow from "../components/OnboardingFlow";
+import QuizForm from "../components/QuizForm"; 
+const Home = () => {
+  const { user } = useUser();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false);
 
-function Home() {
+
+  useEffect(() => {
+    const isFirstVisit = !localStorage.getItem("onboardingComplete");
+    setShowOnboarding(isFirstVisit);
+  }, []);
+
+
+  const handleOnboardingComplete = () => {
+    localStorage.setItem("onboardingComplete", "true");
+    setShowOnboarding(false);
+    setShowQuiz(true);
+  };
+
+  const handleQuizComplete = () => {
+    setShowQuiz(false);
+  };
   return (
-    <div className="px-4 py-8 flex flex-col space-y-6">
-      {/* Profile and Quiz Section */}
+    <div>
+      {showOnboarding && <OnboardingFlow onComplete={handleOnboardingComplete} />}
+      {!showOnboarding && showQuiz && <QuizForm onComplete={handleQuizComplete} />}
+      {!showOnboarding && !showQuiz && (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="md:col-span-2">
           <ProfileCard />
@@ -15,15 +38,16 @@ function Home() {
         <div className='h-full'>
           <QuizCard />
           <div className='mt-4'>
-          <GameBadge/>
+            <GameBadge/>
           </div>
           <div className='mt-4'>
-          <AnalyticsChart/>
+            <AnalyticsChart/>
           </div>
         </div>
       </div>
+  )}
     </div>
   );
-}
+};
 
 export default Home;

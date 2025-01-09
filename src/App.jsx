@@ -8,6 +8,7 @@ import Quiz from "./pages/Quiz";
 import Games from "./pages/Games";
 import Profile from "./pages/Profile";
 import Analytics from "./pages/Analytics";
+import ChatInterface from "./pages/chatbot";
 import SignInPage from "./pages/signin";
 import SignedOutHeader from "./pages/signedout";
 import SignUpPage from "./pages/signup";
@@ -27,8 +28,10 @@ function App() {
           {/* Public Routes */}
           <Route path="/sign-in/*" element={<SignInPage />} />
           <Route path="/sign-up/*" element={<SignUpPage />} />
-          <Route path="/signed-out/*" element={<SignedOutHeader />} />
-          {/* Protected Routes */}
+          <Route path="/signed-out/*" element={
+            <SignedOut>
+            <SignedOutHeader />
+            </SignedOut>} />
           <Route
             path="/*"
             element={
@@ -41,6 +44,7 @@ function App() {
                     <Route path="/games" element={<Games />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/analytics" element={<Analytics />} />
+                    <Route path="/chatbot" element={<ChatInterface />} />
                   </Routes>
                 </Layout>
               </SignedIn>

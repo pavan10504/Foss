@@ -1,5 +1,5 @@
 ﻿import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Gamepad, User, BarChart } from 'lucide-react';
+import { Home, BookOpen, Gamepad, User, BarChart, Bot } from 'lucide-react';
 
 const navItems = [
   { icon: Home, label: 'Dashboard', path: '/home' },
@@ -7,6 +7,7 @@ const navItems = [
   { icon: Gamepad, label: 'Games', path: '/games' },
   { icon: User, label: 'Profile', path: '/profile' },
   { icon: BarChart, label: 'Analytics', path: '/analytics' },
+  {icon:Bot, label: 'Chatbot', path: '/chatbot'},
 ];
 
 export default function Sidebar() {
