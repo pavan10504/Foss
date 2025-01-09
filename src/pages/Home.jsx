@@ -6,7 +6,6 @@ import AnalyticsChart from '@/components/AnalyticsChart';
 import OnboardingFlow from "../components/OnboardingFlow";
 import QuizForm from "../components/QuizForm"; 
 const Home = () => {
-  const { user } = useUser();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showQuiz, setShowQuiz] = useState(false);
 
