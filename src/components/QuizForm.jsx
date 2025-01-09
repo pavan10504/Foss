@@ -172,6 +172,9 @@ const QuizForm =({ onComplete }) => {
   };
 
   const handleSubmit = () => {
+    let mcqScore = 0;
+    let totalMcqQuestions = 0;
+  
     const results = {
       answers: {}, // Structured question-answer pairs
       metadata: {
@@ -186,16 +189,26 @@ const QuizForm =({ onComplete }) => {
       },
     };
   
-
     assessment.assessmentSections.forEach((section) => {
       section.questions.forEach((question) => {
+        const userAnswer = answers[question.id];
+        const isCorrect = question.questionType === "MCQ" && userAnswer === question.correctAnswer;
+  
+        if (question.questionType === "MCQ") {
+          totalMcqQuestions++;
+          if (isCorrect) mcqScore++;
+        }
+  
         results.answers[question.id] = {
           question: question.question,
           type: question.questionType,
-          answer: answers[question.id] || "Not Answered", // Use the provided answer or default to "Not Answered"
+          answer: userAnswer || "Not Answered", // Use the provided answer or default to "Not Answered"
+          correct: isCorrect ? "Yes" : "No",
         };
       });
     });
+  
+    results.metadata.mcqScore = `${mcqScore}/${totalMcqQuestions}`;
     Results(results);
     console.log(results); // For debugging purposes
   };
