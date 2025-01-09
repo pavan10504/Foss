@@ -1,5 +1,6 @@
 ﻿import React from 'react'
 import QuizForm from '@/components/QuizForm'
+import Results from '@/components/results'
 
 function Quiz() {
   return (
@@ -7,6 +8,7 @@ function Quiz() {
       <h1 className="text-3xl font-bold mb-4 dark:text-white">Quiz Page</h1>
       <p className="dark:text-white">This is where the quiz content will go.</p>
       <QuizForm />
+      <Results/>
     </div>
   )
 }

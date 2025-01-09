@@ -11,6 +11,7 @@ import { useTheme } from '../components/theme';
 import  Results from "./results";
 
 const QuizForm =({ onComplete }) => {
+  const [showResults, setShowResults] = useState(false);
   const { isSignedIn, user } = useUser();
   const { darkMode } = useTheme();
   const [loading, setLoading] = useState(true);
@@ -20,6 +21,7 @@ const QuizForm =({ onComplete }) => {
   const [answers, setAnswers] = useState({});
   const [timeLeft, setTimeLeft] = useState(null);
   const [error, setError] = useState(null);
+  const [results, setResults] = useState(null);
   
 
   const QuizLoader =({ userName }) => {
@@ -180,7 +182,7 @@ const QuizForm =({ onComplete }) => {
       metadata: {
         timeSpent: assessment.assessmentMetadata.totalTime * 60 - timeLeft + " seconds",
         careerGoal: assessment.assessmentMetadata.careerGoal,
-        targetGrade: assessment.assessmentMetadata.targetGrade,
+        currentGrade: assessment.assessmentMetadata.currentGrade,
         sectionsCompleted: assessment.assessmentSections.map((section) => ({
           sectionName: section.sectionName,
           questionsAnswered: section.questions.filter((q) => answers[q.id]).length,
@@ -202,25 +204,34 @@ const QuizForm =({ onComplete }) => {
         results.answers[question.id] = {
           question: question.question,
           type: question.questionType,
-          answer: userAnswer || "Not Answered", // Use the provided answer or default to "Not Answered"
-          correct: isCorrect ? "Yes" : "No",
+          answerbystudent: answers[question.id] || "Not Answered", // Use the provided answer or default to "Not Answered"
+          correct: isCorrect ? "Yes" : userAnswer ? "you decide" : "Not Answered",
         };
       });
     });
   
     results.metadata.mcqScore = `${mcqScore}/${totalMcqQuestions}`;
-    Results(results);
+  
+    setResults(results);
+    setShowResults(true);
     console.log(results); // For debugging purposes
   };
 
   if (error) return <div className="p-4 text-red-500">{error}</div>;
   if (loading) return <QuizLoader userName={user.firstName} />;
-
+  if (results) {
+    return <Results results={results} />;
+  }
+  const handleCloseResults = () => {
+    setShowResults(false);
+  };
   const section = getCurrentSection();
   const question = getCurrentQuestion();
 
   return (
     <div className=" mx-auto px-4 py-8">
+    <div>
+    {!showResults ? (
     <div className="space-y-6 max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
@@ -284,6 +295,9 @@ const QuizForm =({ onComplete }) => {
           </Button>
         )}
       </div>
+    </div>) : (
+      <Results results={results} onClose={handleCloseResults} />
+    )}
     </div>
     </div>
   );
