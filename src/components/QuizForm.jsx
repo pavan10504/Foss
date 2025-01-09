@@ -9,7 +9,6 @@ import { useUser } from "@clerk/clerk-react";
 import { BookOpen } from "lucide-react";
 import { useTheme } from '../components/theme';
 import  Results from "./results";
-import { useUser } from "@clerk/clerk-react";
 
 const QuizForm =({ onComplete }) => {
   const { isSignedIn, user } = useUser();
