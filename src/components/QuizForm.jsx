@@ -9,6 +9,7 @@ import { useUser } from "@clerk/clerk-react";
 import { BookOpen } from "lucide-react";
 import { useTheme } from '../components/theme';
 import  Results from "./results";
+import { useUser } from "@clerk/clerk-react";
 
 const QuizForm =({ onComplete }) => {
   const { isSignedIn, user } = useUser();
@@ -186,7 +187,7 @@ const QuizForm =({ onComplete }) => {
       },
     };
   
-    // Populate the answers object with question-answer pairs
+
     assessment.assessmentSections.forEach((section) => {
       section.questions.forEach((question) => {
         results.answers[question.id] = {
