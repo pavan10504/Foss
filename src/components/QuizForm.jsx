@@ -12,7 +12,7 @@ import  Results from "./results";
 
 const QuizForm =({ onComplete }) => {
   const [showResults, setShowResults] = useState(false);
-  const { isSignedIn, user } = useUser();
+  const {  user } = useUser();
   const { darkMode } = useTheme();
   const [loading, setLoading] = useState(true);
   const [assessment, setAssessment] = useState(null);
@@ -23,22 +23,11 @@ const QuizForm =({ onComplete }) => {
   const [error, setError] = useState(null);
   const [results, setResults] = useState(null);
   
-
-  const QuizLoader =({ userName }) => {
-    return (
-      <div className="flex flex-col items-center justify-center p-8 space-y-4">
-        <div className="relative">
-          <BookOpen size={48}/>
-          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-gray-200 rounded-full">
-            <div className="w-full h-full bg-blue-500 rounded-full animate-pulse" />
-          </div>
-        </div>
-        <div className="text-lg font-medium text-gray-700 animate-pulse dark:text-gray-200">
-          Loading your assessment, {userName}...
-        </div>
-      </div>
-    );
+  const handleCloseResults = () => {
+    setShowResults(false);
+    setResults(null); // Reset results when closing
   };
+
 
  useEffect(() => {
   let mounted = true;
@@ -97,12 +86,12 @@ const QuizForm =({ onComplete }) => {
   };
 
   const getCurrentSection = () => {
-    return assessment?.assessmentSections[currentSection];
+    return assessment?.assessmentSections?.[currentSection];
   };
 
   const getCurrentQuestion = () => {
     const section = getCurrentSection();
-    return section?.questions[currentQuestion];
+    return section?.questions?.[currentQuestion];
   };
 
   const calculateProgress = () => {
@@ -205,7 +194,6 @@ const QuizForm =({ onComplete }) => {
           question: question.question,
           type: question.questionType,
           answerbystudent: answers[question.id] || "Not Answered", // Use the provided answer or default to "Not Answered"
-          correct: isCorrect ? "Yes" : userAnswer ? "you decide" : "Not Answered",
         };
       });
     });
@@ -218,21 +206,20 @@ const QuizForm =({ onComplete }) => {
   };
 
   if (error) return <div className="p-4 text-red-500">{error}</div>;
-  if (loading) return <QuizLoader userName={user.firstName} />;
   if (results) {
     return <Results results={results} />;
   }
-  const handleCloseResults = () => {
-    setShowResults(false);
-  };
+  
   const section = getCurrentSection();
   const question = getCurrentQuestion();
-
+  if (!section || !question) return null;
   return (
     <div className=" mx-auto px-4 py-8">
     <div>
-    {!showResults ? (
-    <div className="space-y-6 max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+    {showResults && results ? (
+       <Results results={results} onClose={handleCloseResults} />
+    ) : (
+      <div className="space-y-6 max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
       <div className="space-y-4">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold dark:text-white">{section.sectionName}</h2>
@@ -295,8 +282,7 @@ const QuizForm =({ onComplete }) => {
           </Button>
         )}
       </div>
-    </div>) : (
-      <Results results={results} onClose={handleCloseResults} />
+    </div>
     )}
     </div>
     </div>

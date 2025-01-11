@@ -1,20 +1,52 @@
 ﻿import { useState, useEffect } from "react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useUser } from "@clerk/clerk-react";
-
+import { Doughnut } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { useTheme } from "./theme";
 export default function Results({ results, onClose }) {
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
   const [resultgenerated, setresultgenerated] = useState(null);
   const [error, setError] = useState(null);
   const resultsJSON = JSON.stringify(results, null, 2);
+  const [expandedQuestionId, setExpandedQuestionId] = useState(null);
+  const cacheKey = `resultgenerated${user.firstName}`;
+  const {darkMode} = useTheme();
+
+  ChartJS.register(ArcElement, Tooltip, Legend);
+
+  const prepareChartData = (sectionScores) => {
+    const labels = sectionScores.map((section) => section.name);
+    const data = sectionScores.map((section) => section.correctAnswers);
+    const colors = sectionScores.map((section) => section.color);
+
+    return {
+      labels,
+      datasets: [
+        {
+          label: "Correct Answers by Section",
+          data,
+          backgroundColor: colors,
+          hoverOffset: 4,
+        },
+      ],
+    };
+  };
+
 
   useEffect(() => {
-    const generateAssessmentAnalysis = async (resultsJSON) => {
+    const fetchResults = async () => {
+      try {
+        // Check cache first
+        const cachedResults = localStorage.getItem(cacheKey);
+        if (cachedResults) {
+          setresultgenerated(JSON.parse(cachedResults));
+          setLoading(false);
+          return;
+        }
       const apiKey = "AIzaSyAkEy3M5lAbZUCCu0hZyCMGcsQmpMgLqQ8";
       const genAI = new GoogleGenerativeAI(apiKey);
-
-      try {
         const model = genAI.getGenerativeModel({
           model: "gemini-2.0-flash-exp",
           systemInstruction: `You are an experienced educational assessor and mentor. Your role is to provide detailed, 
@@ -22,7 +54,7 @@ export default function Results({ results, onClose }) {
         });
 
         const generationConfig = {
-          temperature: 0.7, // Reduced for more consistent outputs
+          temperature: 0.7,
           topP: 0.95,
           topK: 40,
           maxOutputTokens: 8192,
@@ -30,7 +62,6 @@ export default function Results({ results, onClose }) {
 
         const chatSession = model.startChat({
           generationConfig,
-          history: [],
         });
 
         const result = await chatSession.sendMessage(`
@@ -40,67 +71,97 @@ export default function Results({ results, onClose }) {
           Generate a detailed JSON response with the following structure:
           {
             "performance": {
-              "overallScore": "Percentage and grade",
-              "sectionScores": {
-                /* Breakdown of scores by section */
+              "overallScore": {
+                "percentage": "85%",
+                "grade": "A",
+                "color": "#4CAF50"  // Color code for visual representation
               },
-              "strengthAreas": [
-                /* List of topics/concepts where the student performed well */
-              ],
-              "improvementAreas": [
-                /* List of topics/concepts needing improvement */
+              "sectionScores": [
+                {
+                  "name": "Section Name",
+                  "score": "90%",
+                  "color": "#2196F3",
+                  "totalQuestions": 10,
+                  "correctAnswers": 9
+                }
               ]
             },
-            "detailedAnalysis": {
-              /* For each incorrectly answered question, provide:
-                 - Common misconceptions
-                 - Correct approach
-                 - Related concepts to review
-              */
+            "questionAnalysis": {
+              "1": {  // Question ID
+                "status": "correct/incorrect/unanswered",
+                "questionText": "Original question text",
+                "studentAnswer": "Student's response",
+                "correctAnswer": "Correct answer",
+                "misconceptions": "Common misconceptions for this type of question",
+                "correctApproach": "Step-by-step explanation of the correct approach",
+                "conceptsToReview": ["Topic 1", "Topic 2"],
+                "relatedResources": [
+                  {
+                    "type": "video/article/practice",
+                    "title": "Resource title",
+                    "description": "Brief description of the resource"
+                  }
+                ]
+              }
             },
-            "learningPlan": {
-              "immediateSteps": [
-                /* Specific actions to take in the next week */
+            "skillsAnalysis": {
+              "strengths": [
+                {
+                  "skill": "Skill name",
+                  "evidence": "Evidence from the assessment",
+                  "recommendations": "How to further improve"
+                }
               ],
-              "resources": [
-                /* Recommended study materials and practice exercises */
-              ],
-              "conceptualGaps": [
-                /* Fundamental concepts that need reinforcement */
+              "areasForImprovement": [
+                {
+                  "skill": "Skill name",
+                  "gap": "Identified knowledge gap",
+                  "actionItems": ["Specific action 1", "Specific action 2"]
+                }
               ]
+            },
+            "timeAnalysis": {
+              "totalTime": "Time spent",
+              "timePerSection": {
+                "sectionName": "time spent",
+                "recommendation": "Time management advice"
+              },
+              "paceAnalysis": "Analysis of time management"
             },
             "careerAlignment": {
-              "relevance": "How this performance relates to their career goal",
-              "recommendations": [
-                /* Career-specific learning recommendations */
+              "relevance": "How this performance relates to career goals",
+              "keySkills": [
+                {
+                  "skill": "Required skill",
+                  "currentLevel": "Current proficiency",
+                  "targetLevel": "Required proficiency",
+                  "developmentPlan": "How to reach target level"
+                }
+              ],
+              "nextSteps": [
+                "Career-specific recommendation 1",
+                "Career-specific recommendation 2"
               ]
             },
-            "summary": {
-              "overview": "2-3 sentences on overall performance",
-              "keyTakeaways": [
-                /* Main points for the student to remember */
-              ],
-              "encouragement": "Personalized motivational message"
-            }
           }
 
-          Consider the student's career goals, current grade level, and time spent on each section. 
-          Focus on constructive feedback and specific, actionable recommendations.
+          Guidelines for analysis:
+          1. Be specific and actionable in feedback
+          2. Focus on patterns in incorrect answers
+          3. Provide both tactical and strategic recommendations
+          4. Consider the student's career goals in recommendations
+          5. Balance constructive criticism with encouragement
+          6. Include time-based analysis and recommendations
+          7. Provide visual-friendly metrics (include color codes)
+          8. Segment feedback into immediate and long-term actions
         `);
-
         const responseText = result.response.text();
         const jsonStartIndex = responseText.indexOf("{");
         const jsonEndIndex = responseText.lastIndexOf("}");
-        const sanitizedJson = responseText.substring(
-          jsonStartIndex,
-          jsonEndIndex + 1
-        );
-
-        const resultf = JSON.parse(sanitizedJson);
-        localStorage.setItem("resultgenerated" + user.firstName, JSON.stringify(resultf));
-        const savedresult = localStorage.getItem("resultgenerated"+user.firstName);
-        const parsedresult = JSON.parse(savedresult);
-        setresultgenerated(parsedresult);
+        const sanitizedJson = responseText.substring(jsonStartIndex,jsonEndIndex + 1);
+        const parsedResult = JSON.parse(sanitizedJson);
+        localStorage.setItem(cacheKey, JSON.stringify(parsedResult));
+        setresultgenerated(parsedResult);
       } catch (error) {
         console.error("Error generating analysis:", error);
         setError("Failed to generate the analysis. Please try again later.");
@@ -108,9 +169,8 @@ export default function Results({ results, onClose }) {
         setLoading(false);
       }
     };
-    console.log(resultsJSON);
-    generateAssessmentAnalysis(resultsJSON);
-  }, [results]);
+    fetchResults();
+  }, [resultsJSON , user.firstName , cacheKey]);
 
   if (loading) {
     return <div className="flex items-center justify-center p-4">
@@ -118,10 +178,11 @@ export default function Results({ results, onClose }) {
       <span className="ml-2">Generating your personalized analysis...</span>
     </div>;
   }
-  
+
   if (error) {
     return <div className="text-red-500 p-4">{error}</div>;
   }
+
 
   return (
     <div className="relative space-y-6 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md max-w-4xl mx-auto">
@@ -134,93 +195,123 @@ export default function Results({ results, onClose }) {
       </button>
 
       <div className="space-y-6">
+        {/* Performance Overview Section */}
         <section>
-          <h2 className="text-2xl font-bold mb-4 dark:text-white">Performance Overview</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-              <h3 className="font-semibold mb-2">Overall Score</h3>
-              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                {resultgenerated.performance.overallScore}
-              </p>
-            </div>
-            <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-              <h3 className="font-semibold mb-2">Section Scores</h3>
-              {Object.entries(resultgenerated.performance.sectionScores).map(([section, score]) => (
-                <div key={section} className="flex justify-between items-center">
-                  <span>{section}</span>
-                  <span className="font-medium">{score}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
+  <h2 className="text-2xl font-bold mb-4 dark:text-white">Performance Overview</h2>
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+    {/* Overall Score Card */}
+    <div className="relative p-4 bg-gray-50 border shadow-md dark:bg-gray-700 rounded-lg">
+      <h3 className="font-semibold mb-2 text-2xl dark:text-white">Overall Score</h3>
+      <div className="flex items-center justify-center h-[70%]">
+        <p className="text-4xl font-semibold text-blue-600 dark:text-blue-400">
+          {resultgenerated.performance.overallScore.percentage} ({resultgenerated.performance.overallScore.grade})
+        </p>
+      </div>
+    </div>
 
+    {/* Enhanced Doughnut Chart */}
+    <div
+      className="relative border items-start p-4 bg-gray-50 dark:bg-gray-700 shadow-md rounded-lg"
+      style={{ height: "300px", width: "100%" }}
+    >
+      <Doughnut
+        data={prepareChartData(resultgenerated.performance.sectionScores)}
+        options={{
+          plugins: {
+            legend: {
+              position: "bottom",
+              align: "start", // Align legend at the bottom
+              labels: {
+                font: {
+                  size: 12, // Larger text for better readability
+                },
+                color: darkMode ? "rgb(255, 255, 255)" : "rgb(0, 0, 0)", // Adjust color for dark mode
+                padding: 10, // Add padding for spacing
+              },
+            },
+          },
+          cutout: "70%", // Doughnut chart with a larger cutout for modern look
+          maintainAspectRatio: false, // Ensure responsiveness
+        }}
+      />
+    </div>
+  </div>
+</section>
+
+
+        {/* Question Analysis Section */}
         <section>
-          <h2 className="text-xl font-bold mb-3 dark:text-white">Detailed Analysis</h2>
-          <div className="space-y-4">
-            {Object.entries(resultgenerated.detailedAnalysis).map(([questionId, analysis]) => (
-              <div key={questionId} className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <h4 className="font-medium mb-2">Question {questionId}</h4>
-                <div className="space-y-2 text-sm">
-                  {Object.entries(analysis).map(([key, value]) => (
-                    <div key={key}>
-                      <span className="font-medium">{key}: </span>
-                      <span>{value}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
+  <h2 className="text-xl font-bold mb-3 h-full dark:text-white">Detailed Analysis</h2>
+  <div className="flex flex-wrap gap-4 mt-4 mb-10">
+    {Object.entries(resultgenerated.questionAnalysis).map(([questionId, analysis]) => (
+      <div
+        key={questionId}
+        className={`p-4 bg-gray-50 dark:bg-gray-700 rounded-lg ${
+          expandedQuestionId === questionId ? "w-full shadow-lg border-2 " : "w-[calc(33%-1rem)]"
+        }`}
+      >
+        <button
+          onClick={() => setExpandedQuestionId(expandedQuestionId === questionId ? null : questionId)}
+          className={`flex justify-between items-center w-full ${
+            analysis.status === "correct"? "text-green-400": analysis.status === "incorrect"? "text-red-400": "text-gray-500 dark:text-white "
+          }`}
+        >
+          <span className={`text-left ${expandedQuestionId === questionId ? "font-bold text-xl" : "md:text-sm text-xs lg:text-base"}`}>Question {questionId}</span>
+          <span>{expandedQuestionId === questionId ? "▲" : "▼"}</span>
+        </button>
+        {expandedQuestionId === questionId && (
+          <div className="space-y-2 text-sm mt-4 dark:text-white">
+            <p>
+              <strong>Question Text:</strong> {analysis.questionText}
+            </p>
+            <p>
+              <strong>Student Answer:</strong> {analysis.studentAnswer}
+            </p>
+            <p >
+              <strong>Correct Answer:</strong> {analysis.correctAnswer}
+            </p>
+            <p className={`${analysis.correctAnswer === "Yes" ? "hidden" : " "}`}>
+              <strong>Explanation:</strong> {analysis.correctApproach}
+            </p>
+            <p className={`${analysis.correctAnswer === "Yes" ? "hidden" : " "}`}>
+              <strong>Concepts to Review:  </strong>
+              {analysis.conceptsToReview?.join(", ")}
+            </p>
           </div>
-        </section>
+        )}
+      </div>
+    ))}
+  </div>
+</section>
 
+
+        {/* Learning Plan Section */}
         <section>
           <h2 className="text-xl font-bold mb-3 dark:text-white">Learning Plan</h2>
           <div className="space-y-4">
-            <div>
-              <h3 className="font-semibold mb-2">Immediate Steps</h3>
-              <ul className="list-disc ml-6 space-y-2">
-                {resultgenerated.learningPlan.immediateSteps.map((step, index) => (
-                  <li key={index}>{step}</li>
+            <div className="mt-6 mb-10">
+              <h3 className="font-semibold mb-2 dark:text-white">Immediate Steps</h3>
+              <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
+              <ul className="list-disc ml-6 space-y-2 dark:text-white mt-2">
+                {resultgenerated.skillsAnalysis.areasForImprovement.map((area, index) => (
+                  <li key={index}>{area.actionItems.join(", ")}</li>
                 ))}
               </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-2">Recommended Resources</h3>
-              <ul className="list-disc ml-6 space-y-2">
-                {resultgenerated.learningPlan.resources.map((resource, index) => (
-                  <li key={index}>{resource}</li>
-                ))}
-              </ul>
+              </div>
             </div>
           </div>
         </section>
 
+        {/* Career Alignment Section */}
         <section>
           <h2 className="text-xl font-bold mb-3 dark:text-white">Career Alignment</h2>
-          <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+          <div className="p-4 bg-gray-100 dark:bg-gray-700 dark:text-white rounded-lg">
             <p className="mb-3">{resultgenerated.careerAlignment.relevance}</p>
             <ul className="list-disc ml-6 space-y-2">
-              {resultgenerated.careerAlignment.recommendations.map((rec, index) => (
-                <li key={index}>{rec}</li>
+              {resultgenerated.careerAlignment.nextSteps.map((step, index) => (
+                <li key={index}>{step}</li>
               ))}
             </ul>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-xl font-bold mb-3 dark:text-white">Summary</h2>
-          <div className="space-y-4">
-            <p>{resultgenerated.summary.overview}</p>
-            <div>
-              <h3 className="font-semibold mb-2">Key Takeaways</h3>
-              <ul className="list-disc ml-6 space-y-2">
-                {resultgenerated.summary.keyTakeaways.map((takeaway, index) => (
-                  <li key={index}>{takeaway}</li>
-                ))}
-              </ul>
-            </div>
-            <p className="italic mt-4">{resultgenerated.summary.encouragement}</p>
           </div>
         </section>
       </div>

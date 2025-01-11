@@ -9,6 +9,7 @@ import { Textarea } from "./ui/textarea";
 const OnboardingFlow = ({ onComplete }) => {
   const { user } = useUser();
   const [step, setStep] = useState(1);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     personalInfo: {
       grade: "",
@@ -36,6 +37,17 @@ const OnboardingFlow = ({ onComplete }) => {
     }));
   };
 
+  const handleStartTest = async () => {
+    setIsLoading(true); // Show loading animation
+    try {
+      await startTest(); // Call your test start function
+    } catch (error) {
+      console.error("Error starting test:", error);
+    } finally {
+      setIsLoading(false); // Hide loading animation
+    }
+  };
+
   const handleSubmit = () => {
     setStep(3);
   };
@@ -55,6 +67,7 @@ const OnboardingFlow = ({ onComplete }) => {
     };
     const studentProfileJSON = JSON.stringify(studentProfile, null, 2);
     const assessmentPlan = await generateAssessmentPlan(studentProfileJSON);
+    localStorage.setItem("studentProfile" + studentProfile.name, JSON.stringify(studentProfileJSON));
     localStorage.setItem("assessmentPlan" + studentProfile.name, JSON.stringify(assessmentPlan));
     onComplete();
   };
@@ -199,7 +212,7 @@ Please create a **personalized assessment** that strictly aligns with the studen
     }
 
   };
- 
+
 
   const renderStep = () => {
     switch (step) {
@@ -220,158 +233,183 @@ Please create a **personalized assessment** that strictly aligns with the studen
 
         return (
           <form
-      className="space-y-8 outline-none"
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleSubmit();
-      }}
-    >
-      {/* Personal Info */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="space-y-6">
-            <div className="flex items-center space-x-2">
-              <div className="h-8 w-1 bg-blue-500 rounded-full" />
-              <h3 className="text-xl font-semibold">Personal Information</h3>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Grade/Class</Label>
-                <Input
-                  type="text"
-                  value={formData.personalInfo.grade}
-                  placeholder="e.g., 10th, 1st PUC,Engineering 1st year"
-                  onChange={(e) => handleChange("personalInfo", "grade", e.target.value)}
-                  className="w-full transition-all hover:border-blue-400 focus:border-blue-500 "
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Age</Label>
-                <Input
-                  type="number"
-                  value={formData.personalInfo.age}
-                  placeholder="Enter your age"
-                  onChange={(e) => handleChange("personalInfo", "age", e.target.value)}
-                  className="w-fulltransition-all hover:border-blue-400 focus:border-blue-500"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            className="space-y-8 outline-none"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+            {/* Personal Info */}
+            <Card>
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  <div className="flex items-center space-x-2">
+                    <div className="h-8 w-1 bg-blue-500 rounded-full" />
+                    <h3 className="text-xl font-semibold">Personal Information</h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Grade/Class</Label>
+                      <Input
+                        type="text"
+                        value={formData.personalInfo.grade}
+                        placeholder="e.g., 10th, 1st PUC,Engineering 1st year"
+                        onChange={(e) => handleChange("personalInfo", "grade", e.target.value)}
+                        className="w-full transition-all hover:border-blue-400 focus:border-blue-500 "
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Age</Label>
+                      <Input
+                        type="number"
+                        value={formData.personalInfo.age}
+                        placeholder="Enter your age"
+                        onChange={(e) => handleChange("personalInfo", "age", e.target.value)}
+                        className="w-fulltransition-all hover:border-blue-400 focus:border-blue-500"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-      {/* Academic Background */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="space-y-6">
-            <div className="flex items-center space-x-2">
-              <div className="h-8 w-1 bg-green-500 rounded-full" />
-              <h3 className="text-xl font-semibold">Academic Background</h3>
-            </div>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Academic Strengths</Label>
-                <Textarea
-                  value={formData.academics.strengths}
-                  onChange={(e) => handleChange("academics", "strengths", e.target.value)}
-                  className="min-h-24 transition-all hover:border-green-400 focus:border-green-500"
-                  placeholder="List your academic strong points...   (seperated by commas)
+            {/* Academic Background */}
+            <Card>
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  <div className="flex items-center space-x-2">
+                    <div className="h-8 w-1 bg-green-500 rounded-full" />
+                    <h3 className="text-xl font-semibold">Academic Background</h3>
+                  </div>
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Academic Strengths</Label>
+                      <Textarea
+                        value={formData.academics.strengths}
+                        onChange={(e) => handleChange("academics", "strengths", e.target.value)}
+                        className="min-h-24 transition-all hover:border-green-400 focus:border-green-500"
+                        placeholder="List your academic strong points...   (seperated by commas)
 e.g., Maths , Science, Literature, basic Java ,etc."
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Areas for Improvement</Label>
-                <Textarea
-                  value={formData.academics.weaknesses}
-                  onChange={(e) => handleChange("academics", "weaknesses", e.target.value)}
-                  className="min-h-24 transition-all hover:border-green-400 focus:border-green-500"
-                  placeholder="What subjects would you like to improve in?  (seperated by commas)"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Favorite Subjects</Label>
-                <Input
-                  type="text"
-                  value={formData.academics.favoriteSubjects}
-                  onChange={(e) => handleChange("academics", "favoriteSubjects", e.target.value)}
-                  className="transition-all hover:border-green-400 focus:border-green-500"
-                  placeholder="e.g., Mathematics, Science, Literature"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Current Grades</Label>
-                <Textarea
-                  value={formData.academics.currentGrades}
-                  onChange={(e) => handleChange("academics", "currentGrades", e.target.value)}
-                  className="min-h-24 transition-all hover:border-green-400 focus:border-green-500"
-                  placeholder="List your recent grades in key subjects...
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Areas for Improvement</Label>
+                      <Textarea
+                        value={formData.academics.weaknesses}
+                        onChange={(e) => handleChange("academics", "weaknesses", e.target.value)}
+                        className="min-h-24 transition-all hover:border-green-400 focus:border-green-500"
+                        placeholder="What subjects would you like to improve in?  (seperated by commas)"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Favorite Subjects</Label>
+                      <Input
+                        type="text"
+                        value={formData.academics.favoriteSubjects}
+                        onChange={(e) => handleChange("academics", "favoriteSubjects", e.target.value)}
+                        className="transition-all hover:border-green-400 focus:border-green-500"
+                        placeholder="e.g., Mathematics, Science, Literature"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Current Grades</Label>
+                      <Textarea
+                        value={formData.academics.currentGrades}
+                        onChange={(e) => handleChange("academics", "currentGrades", e.target.value)}
+                        className="min-h-24 transition-all hover:border-green-400 focus:border-green-500"
+                        placeholder="List your recent grades in key subjects...
 e.g., Maths-85 , Science-67, Literature-56, etc."
-                  required
-                />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-      {/* Career Goals */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="space-y-6">
-            <div className="flex items-center space-x-2">
-              <div className="h-8 w-1 bg-purple-500 rounded-full" />
-              <h3 className="text-xl font-semibold">Career Goals</h3>
-            </div>
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Primary Career Goal</Label>
-                <Input
-                  type="text"
-                  value={formData.careerGoals.primaryGoal}
-                  onChange={(e) => handleChange("careerGoals", "primaryGoal", e.target.value)}
-                  className="transition-all hover:border-purple-400 focus:border-purple-500"
-                  placeholder="What career do you aspire to?"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-medium">Why This Career?</Label>
-                <Textarea
-                  value={formData.careerGoals.reasonForChoice}
-                  onChange={(e) => handleChange("careerGoals", "reasonForChoice", e.target.value)}
-                  className="min-h-24 transition-all hover:border-purple-400 focus:border-purple-500"
-                  placeholder="Tell us what inspires you about this career path..."
-                  required
-                />
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            {/* Career Goals */}
+            <Card>
+              <CardContent className="p-6">
+                <div className="space-y-6">
+                  <div className="flex items-center space-x-2">
+                    <div className="h-8 w-1 bg-purple-500 rounded-full" />
+                    <h3 className="text-xl font-semibold">Career Goals</h3>
+                  </div>
+                  <div className="space-y-6">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Primary Career Goal</Label>
+                      <Input
+                        type="text"
+                        value={formData.careerGoals.primaryGoal}
+                        onChange={(e) => handleChange("careerGoals", "primaryGoal", e.target.value)}
+                        className="transition-all hover:border-purple-400 focus:border-purple-500"
+                        placeholder="What career do you aspire to?"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium">Why This Career?</Label>
+                      <Textarea
+                        value={formData.careerGoals.reasonForChoice}
+                        onChange={(e) => handleChange("careerGoals", "reasonForChoice", e.target.value)}
+                        className="min-h-24 transition-all hover:border-purple-400 focus:border-purple-500"
+                        placeholder="Tell us what inspires you about this career path..."
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
 
-      <Button
-        type="submit"
-        className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 rounded-lg text-lg font-medium transition-all duration-200 transform hover:scale-[1.02]"
-      >
-        Submit Profile
-      </Button>
-    </form>
+            <Button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-3 rounded-lg text-lg font-medium transition-all duration-200 transform hover:scale-[1.02]"
+            >
+              Submit Profile
+            </Button>
+          </form>
         );
-        case 3:
+      case 3:
         return (
           <div className="text-center p-6">
             <h2 className="text-2xl font-bold mb-4">Ready for Your Assessment!</h2>
-            <p className="mb-6">Based on your profile, we've prepared a tailored assessment to help guide your journey.</p>
-            <Button 
-              onClick={startTest}
-              className="w-full md:w-auto"
+            <p className="mb-6">
+              Based on your profile, we've prepared a tailored assessment to help guide your journey.
+            </p>
+            <Button
+              onClick={handleStartTest}
+              className="w-full md:w-auto "
+              disabled={isLoading} // Optional: Disable button while loading
             >
-              Start Assessment
+              {isLoading ? (
+                <svg
+                  className="animate-spin h-5 w-5 text-white mr-2"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                  ></path>
+                </svg>
+              ) : null}
+              {isLoading ? "Starting..." : "Start Assessment"}
             </Button>
           </div>
         );
@@ -391,4 +429,4 @@ e.g., Maths-85 , Science-67, Literature-56, etc."
     </div>
   );
 };
-    export default OnboardingFlow;
+export default OnboardingFlow;
