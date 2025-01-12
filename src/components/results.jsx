@@ -4,7 +4,7 @@ import { useUser } from "@clerk/clerk-react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { useTheme } from "./theme";
-export default function Results({ results, onClose }) {
+export default function Results({ results}) {
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
   const [resultgenerated, setresultgenerated] = useState(null);
@@ -12,7 +12,7 @@ export default function Results({ results, onClose }) {
   const resultsJSON = JSON.stringify(results, null, 2);
   const [expandedQuestionId, setExpandedQuestionId] = useState(null);
   const cacheKey = `resultgenerated${user.firstName}`;
-  const {darkMode} = useTheme();
+  const { darkMode } = useTheme();
 
   ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -33,8 +33,9 @@ export default function Results({ results, onClose }) {
       ],
     };
   };
-
-
+  const handleClose = () => {
+    navigate("/home"); // Or wherever you want to redirect after closing
+  };
   useEffect(() => {
     const fetchResults = async () => {
       try {
@@ -45,8 +46,8 @@ export default function Results({ results, onClose }) {
           setLoading(false);
           return;
         }
-      const apiKey = "AIzaSyAkEy3M5lAbZUCCu0hZyCMGcsQmpMgLqQ8";
-      const genAI = new GoogleGenerativeAI(apiKey);
+        const apiKey = "AIzaSyAkEy3M5lAbZUCCu0hZyCMGcsQmpMgLqQ8";
+        const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({
           model: "gemini-2.0-flash-exp",
           systemInstruction: `You are an experienced educational assessor and mentor. Your role is to provide detailed, 
@@ -143,7 +144,32 @@ export default function Results({ results, onClose }) {
                 "Career-specific recommendation 2"
               ]
             },
-          }
+  "roadmap": { //roadmap for the student to follow to achieve success
+    "studentBasics": {
+      "strengths":[""], // ["Problem Solving", "Quick Learning"]
+      "improvements":[""], // ["Time Management", "Practice Consistency"]
+      "goals":["" ],  //["Master React", "Build Portfolio"]
+      "timeline": " " , //"1 year"
+      "focus": " " , //"Full Stack Mastery"
+      "actions": [""] //["spotify clone", "movie app", "e-commerce app"]
+    },
+    "learningPlan": {
+      "shortTerm": {
+        "focus": [""] , // "React Fundamentals"
+        "actions":[""] , // ["Complete Basic Tutorials", "Build Small Projects"]
+        "timeline":"" , // "1-2 weeks"
+        "checkpoints": [""]  //["Component Creation", "State Management", "Props & Events", "Hooks"]
+      },
+      "longTerm": {
+        "focus": "" ,  //"Full Stack Development"
+        "actions":[""],  // ["Backend Integration", "Database Design"]
+        "timeline":"",     // "2-3 months"
+        "checkpoints":[""]  // ["API Development", "Database Schema", "Authentication"]
+        }
+    }
+  },
+
+}
 
           Guidelines for analysis:
           1. Be specific and actionable in feedback
@@ -158,7 +184,10 @@ export default function Results({ results, onClose }) {
         const responseText = result.response.text();
         const jsonStartIndex = responseText.indexOf("{");
         const jsonEndIndex = responseText.lastIndexOf("}");
-        const sanitizedJson = responseText.substring(jsonStartIndex,jsonEndIndex + 1);
+        const sanitizedJson = responseText.substring(
+          jsonStartIndex,
+          jsonEndIndex + 1
+        );
         const parsedResult = JSON.parse(sanitizedJson);
         localStorage.setItem(cacheKey, JSON.stringify(parsedResult));
         setresultgenerated(parsedResult);
@@ -170,133 +199,177 @@ export default function Results({ results, onClose }) {
       }
     };
     fetchResults();
-  }, [resultsJSON , user.firstName , cacheKey]);
+  }, [resultsJSON, user.firstName, cacheKey]);
 
   if (loading) {
-    return <div className="flex items-center justify-center p-4">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
-      <span className="ml-2">Generating your personalized analysis...</span>
-    </div>;
+    return (
+      <div className="flex items-center justify-center p-4">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
+        <span className="ml-2">Generating your personalized analysis...</span>
+      </div>
+    );
   }
 
   if (error) {
     return <div className="text-red-500 p-4">{error}</div>;
   }
-
-
+  if (!resultgenerated) return null;
   return (
     <div className="relative space-y-6 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md max-w-4xl mx-auto">
       <button
-        onClick={onClose}
-        className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+        onClick={handleClose}
+        className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
         aria-label="Close"
       >
-        <span className="text-gray-500 dark:text-gray-400">×</span>
+        <span className="text-gray-500 dark:text-gray-400 text-xl">×</span>
       </button>
 
       <div className="space-y-6">
         {/* Performance Overview Section */}
         <section>
-  <h2 className="text-2xl font-bold mb-4 dark:text-white">Performance Overview</h2>
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-    {/* Overall Score Card */}
-    <div className="relative p-4 bg-gray-50 border shadow-md dark:bg-gray-700 rounded-lg">
-      <h3 className="font-semibold mb-2 text-2xl dark:text-white">Overall Score</h3>
-      <div className="flex items-center justify-center h-[70%]">
-        <p className="text-4xl font-semibold text-blue-600 dark:text-blue-400">
-          {resultgenerated.performance.overallScore.percentage} ({resultgenerated.performance.overallScore.grade})
-        </p>
-      </div>
-    </div>
+          <h2 className="text-2xl font-bold mb-4 dark:text-white">
+            Performance Overview
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
+            {/* Overall Score Card */}
+            <div className="relative p-4 bg-gray-50 border shadow-md dark:bg-gray-700 rounded-lg">
+              <h3 className="font-semibold mb-2 text-2xl dark:text-white">
+                Overall Score
+              </h3>
+              <div className="flex items-center justify-center h-[70%]">
+                <p className="text-4xl font-semibold text-blue-600 dark:text-blue-400">
+                  {resultgenerated.performance.overallScore.percentage} (
+                  {resultgenerated.performance.overallScore.grade})
+                </p>
+              </div>
+            </div>
 
-    {/* Enhanced Doughnut Chart */}
-    <div
-      className="relative border items-start p-4 bg-gray-50 dark:bg-gray-700 shadow-md rounded-lg"
-      style={{ height: "300px", width: "100%" }}
-    >
-      <Doughnut
-        data={prepareChartData(resultgenerated.performance.sectionScores)}
-        options={{
-          plugins: {
-            legend: {
-              position: "bottom",
-              align: "start", // Align legend at the bottom
-              labels: {
-                font: {
-                  size: 12, // Larger text for better readability
-                },
-                color: darkMode ? "rgb(255, 255, 255)" : "rgb(0, 0, 0)", // Adjust color for dark mode
-                padding: 10, // Add padding for spacing
-              },
-            },
-          },
-          cutout: "70%", // Doughnut chart with a larger cutout for modern look
-          maintainAspectRatio: false, // Ensure responsiveness
-        }}
-      />
-    </div>
-  </div>
-</section>
-
+            {/* Enhanced Doughnut Chart */}
+            <div
+              className="relative border items-start p-4 bg-gray-50 dark:bg-gray-700 shadow-md rounded-lg"
+              style={{ height: "300px", width: "100%" }}
+            >
+              <Doughnut
+                data={prepareChartData(
+                  resultgenerated.performance.sectionScores
+                )}
+                options={{
+                  plugins: {
+                    legend: {
+                      position: "bottom",
+                      align: "start", // Align legend at the bottom
+                      labels: {
+                        font: {
+                          size: 12, // Larger text for better readability
+                        },
+                        color: darkMode ? "rgb(255, 255, 255)" : "rgb(0, 0, 0)", // Adjust color for dark mode
+                        padding: 10, // Add padding for spacing
+                      },
+                    },
+                  },
+                  cutout: "70%", // Doughnut chart with a larger cutout for modern look
+                  maintainAspectRatio: false, // Ensure responsiveness
+                }}
+              />
+            </div>
+          </div>
+        </section>
 
         {/* Question Analysis Section */}
         <section>
-  <h2 className="text-xl font-bold mb-3 h-full dark:text-white">Detailed Analysis</h2>
-  <div className="flex flex-wrap gap-4 mt-4 mb-10">
-    {Object.entries(resultgenerated.questionAnalysis).map(([questionId, analysis]) => (
-      <div
-        key={questionId}
-        className={`p-4 bg-gray-50 dark:bg-gray-700 rounded-lg ${
-          expandedQuestionId === questionId ? "w-full shadow-lg border-2 " : "w-[calc(33%-1rem)]"
-        }`}
-      >
-        <button
-          onClick={() => setExpandedQuestionId(expandedQuestionId === questionId ? null : questionId)}
-          className={`flex justify-between items-center w-full ${
-            analysis.status === "correct"? "text-green-400": analysis.status === "incorrect"? "text-red-400": "text-gray-500 dark:text-white "
-          }`}
-        >
-          <span className={`text-left ${expandedQuestionId === questionId ? "font-bold text-xl" : "md:text-sm text-xs lg:text-base"}`}>Question {questionId}</span>
-          <span>{expandedQuestionId === questionId ? "▲" : "▼"}</span>
-        </button>
-        {expandedQuestionId === questionId && (
-          <div className="space-y-2 text-sm mt-4 dark:text-white">
-            <p>
-              <strong>Question Text:</strong> {analysis.questionText}
-            </p>
-            <p>
-              <strong>Student Answer:</strong> {analysis.studentAnswer}
-            </p>
-            <p >
-              <strong>Correct Answer:</strong> {analysis.correctAnswer}
-            </p>
-            <p className={`${analysis.correctAnswer === "Yes" ? "hidden" : " "}`}>
-              <strong>Explanation:</strong> {analysis.correctApproach}
-            </p>
-            <p className={`${analysis.correctAnswer === "Yes" ? "hidden" : " "}`}>
-              <strong>Concepts to Review:  </strong>
-              {analysis.conceptsToReview?.join(", ")}
-            </p>
+          <h2 className="text-xl font-bold mb-3 h-full dark:text-white">
+            Detailed Analysis
+          </h2>
+          <div className="flex flex-wrap gap-4 mt-4 mb-10">
+            {Object.entries(resultgenerated.questionAnalysis).map(
+              ([questionId, analysis]) => (
+                <div
+                  key={questionId}
+                  className={`p-4 bg-gray-50 dark:bg-gray-700 rounded-lg ${
+                    expandedQuestionId === questionId
+                      ? "w-full shadow-lg border-2 "
+                      : "w-[calc(33%-1rem)]"
+                  }`}
+                >
+                  <button
+                    onClick={() =>
+                      setExpandedQuestionId(
+                        expandedQuestionId === questionId ? null : questionId
+                      )
+                    }
+                    className={`flex justify-between items-center w-full ${
+                      analysis.status === "correct"
+                        ? "text-green-400"
+                        : analysis.status === "incorrect"
+                        ? "text-red-400"
+                        : "text-gray-500 dark:text-white "
+                    }`}
+                  >
+                    <span
+                      className={`text-left ${
+                        expandedQuestionId === questionId
+                          ? "font-bold text-xl"
+                          : "md:text-sm text-xs lg:text-base"
+                      }`}
+                    >
+                      Question {questionId}
+                    </span>
+                    <span>{expandedQuestionId === questionId ? "▲" : "▼"}</span>
+                  </button>
+                  {expandedQuestionId === questionId && (
+                    <div className="space-y-2 text-sm mt-4 dark:text-white">
+                      <p>
+                        <strong>Question Text:</strong> {analysis.questionText}
+                      </p>
+                      <p>
+                        <strong>Student Answer:</strong>{" "}
+                        {analysis.studentAnswer}
+                      </p>
+                      <p>
+                        <strong>Correct Answer:</strong>{" "}
+                        {analysis.correctAnswer}
+                      </p>
+                      <p
+                        className={`${
+                          analysis.correctAnswer === "Yes" ? "hidden" : " "
+                        }`}
+                      >
+                        <strong>Explanation:</strong> {analysis.correctApproach}
+                      </p>
+                      <p
+                        className={`${
+                          analysis.correctAnswer === "Yes" ? "hidden" : " "
+                        }`}
+                      >
+                        <strong>Concepts to Review: </strong>
+                        {analysis.conceptsToReview?.join(", ")}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )
+            )}
           </div>
-        )}
-      </div>
-    ))}
-  </div>
-</section>
-
+        </section>
 
         {/* Learning Plan Section */}
         <section>
-          <h2 className="text-xl font-bold mb-3 dark:text-white">Learning Plan</h2>
+          <h2 className="text-xl font-bold mb-3 dark:text-white">
+            Learning Plan
+          </h2>
           <div className="space-y-4">
             <div className="mt-6 mb-10">
-              <h3 className="font-semibold mb-2 dark:text-white">Immediate Steps</h3>
+              <h3 className="font-semibold mb-2 dark:text-white">
+                Immediate Steps
+              </h3>
               <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-2">
-              <ul className="list-disc ml-6 space-y-2 dark:text-white mt-2">
-                {resultgenerated.skillsAnalysis.areasForImprovement.map((area, index) => (
-                  <li key={index}>{area.actionItems.join(", ")}</li>
-                ))}
-              </ul>
+                <ul className="list-disc ml-6 space-y-2 dark:text-white mt-2">
+                  {resultgenerated.skillsAnalysis.areasForImprovement.map(
+                    (area, index) => (
+                      <li key={index}>{area.actionItems.join(", ")}</li>
+                    )
+                  )}
+                </ul>
               </div>
             </div>
           </div>
@@ -304,7 +377,9 @@ export default function Results({ results, onClose }) {
 
         {/* Career Alignment Section */}
         <section>
-          <h2 className="text-xl font-bold mb-3 dark:text-white">Career Alignment</h2>
+          <h2 className="text-xl font-bold mb-3 dark:text-white">
+            Career Alignment
+          </h2>
           <div className="p-4 bg-gray-100 dark:bg-gray-700 dark:text-white rounded-lg">
             <p className="mb-3">{resultgenerated.careerAlignment.relevance}</p>
             <ul className="list-disc ml-6 space-y-2">

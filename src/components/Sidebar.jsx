@@ -1,5 +1,5 @@
 ﻿import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Gamepad, User, BarChart, Bot ,SettingsIcon } from 'lucide-react';
+import { Home, BookOpen, Gamepad, User, BarChart, Bot ,SettingsIcon,Route } from 'lucide-react';
 
 const navItems = [
   { icon: Home, label: 'Dashboard', path: '/home' },
@@ -7,6 +7,7 @@ const navItems = [
   { icon: Gamepad, label: 'Games', path: '/games' },
   { icon: BarChart, label: 'Analytics', path: '/analytics' },
   { icon: Bot, label: 'Chatbot', path: '/chatbot' },
+  { icon:Route,label:'Roadmap',path:'/roadmap'},
   { icon: SettingsIcon, label: 'Profile', path: '/profile', isLast: true }, 
 ];
 

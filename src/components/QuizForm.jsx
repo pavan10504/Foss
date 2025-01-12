@@ -25,7 +25,8 @@ const QuizForm =({ onComplete }) => {
   
   const handleCloseResults = () => {
     setShowResults(false);
-    setResults(null); // Reset results when closing
+    setResults(null);
+    onComplete(); // Reset results when closing
   };
 
 

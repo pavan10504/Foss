@@ -9,6 +9,7 @@ import Games from "./pages/Games";
 import Profile from "./pages/Profile";
 import Analytics from "./pages/Analytics";
 import ChatInterface from "./pages/chatbot";
+import IntegratedRoadmap from "./pages/roadmap";
 import SignInPage from "./pages/signin";
 import SignedOutHeader from "./pages/signedout";
 import SignUpPage from "./pages/signup";
@@ -44,6 +45,7 @@ function App() {
                     <Route path="/games" element={<Games />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/analytics" element={<Analytics />} />
+                    <Route path="/roadmap" element={<IntegratedRoadmap />} />
                     <Route path="/chatbot" element={<ChatInterface />} />
                   </Routes>
                 </Layout>
