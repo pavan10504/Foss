@@ -53,8 +53,8 @@ function AnalyticsChart() {
         label: 'Score',
         data: [65, 59, 80, 81, 56],
         backgroundColor: darkMode
-          ? 'rgba(75, 192, 192, 1)' // Bar color in dark mode
-          : 'rgba(53, 162, 235, 1)', // Bar color in light mode
+          ? 'rgba(75, 192, 192, 1)' 
+          : 'rgba(53, 162, 235, 1)',
       },
     ],
   };

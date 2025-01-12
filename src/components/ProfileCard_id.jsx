@@ -5,12 +5,12 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 const ProfileCard = () => {
   const { user } = useUser();
 
-  // You would typically fetch this data from your backend
+
   const userProgress = {
     testsCompleted: 0,
     currentLevel: 'Beginner',
     nextMilestone: 'Complete first assessment',
-    careerGoal: 'Loading...' // This would come from your stored user data
+    careerGoal: 'Loading...' 
   };
 
   return (
@@ -20,7 +20,7 @@ const ProfileCard = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {/* User Info Section */}
+          
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center">
               {user?.imageUrl ? (
@@ -43,7 +43,7 @@ const ProfileCard = () => {
             </div>
           </div>
 
-          {/* Progress Section */}
+         
           <div className="grid grid-cols-2 gap-4">
             <div className="p-4 bg-gray-50 rounded-lg">
               <h4 className="font-medium text-gray-600">Tests Completed</h4>
@@ -55,13 +55,13 @@ const ProfileCard = () => {
             </div>
           </div>
 
-          {/* Career Goal Section */}
+         
           <div className="p-4 bg-gray-50 rounded-lg">
             <h4 className="font-medium text-gray-600">Career Goal</h4>
             <p className="text-lg font-semibold">{userProgress.careerGoal}</p>
           </div>
 
-          {/* Next Steps */}
+          
           <div className="p-4 border border-blue-100 bg-blue-50 rounded-lg">
             <h4 className="font-medium text-blue-600">Next Milestone</h4>
             <p className="mt-1">{userProgress.nextMilestone}</p>

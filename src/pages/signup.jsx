@@ -10,14 +10,13 @@ export default function SignUpPage() {
 
     useEffect(() => {
         if (isSignedIn) {
-            // Redirect signed-in users
+            
             navigate("/home");
         }
     }, [isSignedIn, navigate]);
 
     return (
         <div className="flex items-center justify-center h-screen">
-            {/* If the user is signed out, show the SignUp form */}
             <SignedOut>
                 <SignUp appearance={neobrutalism} />
             </SignedOut>

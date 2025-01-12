@@ -26,7 +26,7 @@ function App() {
     <ClerkProvider publishableKey={clerkPubKey} appearance={neobrutalism}>
       <Router>
         <Routes>
-          {/* Public Routes */}
+          
           <Route path="/sign-in/*" element={<SignInPage />} />
           <Route path="/sign-up/*" element={<SignUpPage />} />
           <Route path="/signed-out/*" element={

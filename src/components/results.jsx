@@ -4,6 +4,7 @@ import { useUser } from "@clerk/clerk-react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { useTheme } from "./theme";
+
 export default function Results({ results}) {
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
@@ -34,12 +35,12 @@ export default function Results({ results}) {
     };
   };
   const handleClose = () => {
-    navigate("/home"); // Or wherever you want to redirect after closing
+    navigate("/home"); 
   };
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        // Check cache first
+        
         const cachedResults = localStorage.getItem(cacheKey);
         if (cachedResults) {
           setresultgenerated(JSON.parse(cachedResults));
@@ -221,17 +222,17 @@ export default function Results({ results}) {
         className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
         aria-label="Close"
       >
-        <span className="text-gray-500 dark:text-gray-400 text-xl">×</span>
+        <span className="text-red-500 dark:text-gray-400 text-xl">×</span>
       </button>
 
       <div className="space-y-6">
-        {/* Performance Overview Section */}
+       
         <section>
           <h2 className="text-2xl font-bold mb-4 dark:text-white">
             Performance Overview
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10">
-            {/* Overall Score Card */}
+            
             <div className="relative p-4 bg-gray-50 border shadow-md dark:bg-gray-700 rounded-lg">
               <h3 className="font-semibold mb-2 text-2xl dark:text-white">
                 Overall Score
@@ -244,7 +245,7 @@ export default function Results({ results}) {
               </div>
             </div>
 
-            {/* Enhanced Doughnut Chart */}
+            
             <div
               className="relative border items-start p-4 bg-gray-50 dark:bg-gray-700 shadow-md rounded-lg"
               style={{ height: "300px", width: "100%" }}
@@ -257,25 +258,25 @@ export default function Results({ results}) {
                   plugins: {
                     legend: {
                       position: "bottom",
-                      align: "start", // Align legend at the bottom
+                      align: "start", 
                       labels: {
                         font: {
-                          size: 12, // Larger text for better readability
+                          size: 12,
                         },
-                        color: darkMode ? "rgb(255, 255, 255)" : "rgb(0, 0, 0)", // Adjust color for dark mode
-                        padding: 10, // Add padding for spacing
+                        color: darkMode ? "rgb(255, 255, 255)" : "rgb(0, 0, 0)",
+                        padding: 10,
                       },
                     },
                   },
-                  cutout: "70%", // Doughnut chart with a larger cutout for modern look
-                  maintainAspectRatio: false, // Ensure responsiveness
+                  cutout: "70%", 
+                  maintainAspectRatio: false, 
                 }}
               />
             </div>
           </div>
         </section>
 
-        {/* Question Analysis Section */}
+        
         <section>
           <h2 className="text-xl font-bold mb-3 h-full dark:text-white">
             Detailed Analysis
@@ -352,7 +353,7 @@ export default function Results({ results}) {
           </div>
         </section>
 
-        {/* Learning Plan Section */}
+        
         <section>
           <h2 className="text-xl font-bold mb-3 dark:text-white">
             Learning Plan
@@ -375,7 +376,7 @@ export default function Results({ results}) {
           </div>
         </section>
 
-        {/* Career Alignment Section */}
+        
         <section>
           <h2 className="text-xl font-bold mb-3 dark:text-white">
             Career Alignment

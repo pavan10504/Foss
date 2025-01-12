@@ -35,7 +35,7 @@ function Analytics() {
     const cachedResults = localStorage.getItem(cacheKey);
 
     if (cachedResults) {
-      setResult(JSON.parse(cachedResults)); // Parse JSON before storing it in the state
+      setResult(JSON.parse(cachedResults)); 
     }
   }, [user.firstName]);
 
@@ -57,18 +57,18 @@ function Analytics() {
               plugins: {
                 legend: {
                   position: "bottom",
-                  align: "start", // Align legend at the bottom
+                  align: "start",
                   labels: {
                     font: {
-                      size: 12, // Larger text for better readability
+                      size: 12, 
                     },
-                    color: darkMode ? "rgb(255, 255, 255)" : "rgb(0, 0, 0)", // Adjust color for dark mode
-                    padding: 10, // Add padding for spacing
+                    color: darkMode ? "rgb(255, 255, 255)" : "rgb(0, 0, 0)", 
+                    padding: 10, 
                   },
                 },
               },
-              cutout: "70%", // Doughnut chart with a larger cutout for modern look
-              maintainAspectRatio: false, // Ensure responsiveness
+              cutout: "70%", 
+              maintainAspectRatio: false,
             }}
           />
         </div>
@@ -86,7 +86,7 @@ function Analytics() {
           </div>
         </div>
 
-        {/* Career Alignment Section */}
+        
         <div className='mt-0'>
           <h2 className="text-xl font-bold mb-3 dark:text-white">Career Alignment</h2>
           <div className="p-4 bg-gray-100 dark:bg-gray-900 dark:text-white rounded-lg">

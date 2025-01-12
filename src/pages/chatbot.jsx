@@ -78,15 +78,15 @@ const ChatInterface = () => {
                 : 'bg-white dark:bg-gray-700 dark:text-white'
                 }`}>
                 {message.role === 'user' ? (
-    <div className='prose-sm'>
-      {message.content}
-    </div>
-  ) : (
-    <ReactMarkdown className="prose prose-sm dark:prose-invert">
-      {message.content}
-    </ReactMarkdown>
-  )}
-            </div>
+                  <div className='prose-sm'>
+                    {message.content}
+                  </div>
+                ) : (
+                  <ReactMarkdown className="prose prose-sm dark:prose-invert">
+                    {message.content}
+                  </ReactMarkdown>
+                )}
+              </div>
             </div>
           ))}
           {loading && (
@@ -121,8 +121,8 @@ const ChatInterface = () => {
           </div>
         </form>
       </div>
-      </div>
-      );
+    </div>
+  );
 };
 
-      export default ChatInterface;
+export default ChatInterface;

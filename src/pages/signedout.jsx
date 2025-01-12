@@ -1,18 +1,18 @@
 ﻿import React from 'react';
 import { SignedOut } from "@clerk/clerk-react";
 import { Sun, Moon } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';  // Use useNavigate instead of useHistory
+import { useNavigate } from 'react-router-dom';  
 
 function SignedOutHeader({ darkMode, setDarkMode }) {
-  const navigate = useNavigate();  // Initialize the navigate function
+  const navigate = useNavigate();  
 
-  // Custom button to redirect to the SignIn page
+  
   const handleSignIn = () => {
-    navigate('/sign-in');  // Use navigate to redirect
+    navigate('/sign-in');  
   };
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Header */}
+     
       <header className="bg-white shadow-sm dark:bg-gray-800 dark:border-gray-700">
         <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
@@ -46,7 +46,7 @@ function SignedOutHeader({ darkMode, setDarkMode }) {
         </div>
       
 
-      {/* Footer */}
+      
       <footer className="bg-gray-200 text-center py-4 mt-auto">
         <p>© 2025 Skill Quest. All rights reserved.</p>
       </footer>

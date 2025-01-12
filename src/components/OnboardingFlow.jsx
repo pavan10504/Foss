@@ -38,13 +38,13 @@ const OnboardingFlow = ({ onComplete }) => {
   };
 
   const handleStartTest = async () => {
-    setIsLoading(true); // Show loading animation
+    setIsLoading(true);
     try {
-      await startTest(); // Call your test start function
+      await startTest();
     } catch (error) {
       console.error("Error starting test:", error);
     } finally {
-      setIsLoading(false); // Hide loading animation
+      setIsLoading(false); 
     }
   };
 
@@ -275,7 +275,6 @@ Please create a **personalized assessment** that strictly aligns with the studen
               </CardContent>
             </Card>
 
-            {/* Academic Background */}
             <Card>
               <CardContent className="p-6">
                 <div className="space-y-6">
@@ -332,7 +331,7 @@ e.g., Maths-85 , Science-67, Literature-56, etc."
               </CardContent>
             </Card>
 
-            {/* Career Goals */}
+
             <Card>
               <CardContent className="p-6">
                 <div className="space-y-6">
@@ -385,7 +384,7 @@ e.g., Maths-85 , Science-67, Literature-56, etc."
             <Button
               onClick={handleStartTest}
               className="w-full md:w-auto "
-              disabled={isLoading} // Optional: Disable button while loading
+              disabled={isLoading} 
             >
               {isLoading ? (
                 <svg

@@ -96,12 +96,12 @@
   }
 }
 
-/* Glassmorphism effect */
+
 .glassmorphism {
   @apply bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg;
 }
 
-/* Smooth transitions */
+
 .transition-all {
   transition-property: all;
   transition-duration: 300ms;

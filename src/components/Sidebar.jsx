@@ -24,7 +24,7 @@ export default function Sidebar() {
           {/* Navigation Items */}
           <nav className="mt-auto">
             {navItems
-              .filter((item) => !item.isLast) // Render non-last items first
+              .filter((item) => !item.isLast) 
               .map((item) => (
                 <Link
                   key={item.path}
@@ -42,10 +42,10 @@ export default function Sidebar() {
           </nav>
         </div>
 
-        {/* Profile Item */}
+        
         <div className="mt-auto">
           {navItems
-            .filter((item) => item.isLast) // Render last item separately
+            .filter((item) => item.isLast) 
             .map((item) => (
               <Link
                 key={item.path}

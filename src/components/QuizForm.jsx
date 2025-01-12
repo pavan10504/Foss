@@ -6,7 +6,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "./ui/progress"; 
 import { useUser } from "@clerk/clerk-react";
-import { BookOpen } from "lucide-react";
 import { useTheme } from '../components/theme';
 import  Results from "./results";
 
@@ -23,12 +22,6 @@ const QuizForm =({ onComplete }) => {
   const [error, setError] = useState(null);
   const [results, setResults] = useState(null);
   
-  const handleCloseResults = () => {
-    setShowResults(false);
-    setResults(null);
-    onComplete(); // Reset results when closing
-  };
-
 
  useEffect(() => {
   let mounted = true;
@@ -168,7 +161,7 @@ const QuizForm =({ onComplete }) => {
     let totalMcqQuestions = 0;
   
     const results = {
-      answers: {}, // Structured question-answer pairs
+      answers: {}, 
       metadata: {
         timeSpent: assessment.assessmentMetadata.totalTime * 60 - timeLeft + " seconds",
         careerGoal: assessment.assessmentMetadata.careerGoal,
@@ -194,7 +187,7 @@ const QuizForm =({ onComplete }) => {
         results.answers[question.id] = {
           question: question.question,
           type: question.questionType,
-          answerbystudent: answers[question.id] || "Not Answered", // Use the provided answer or default to "Not Answered"
+          answerbystudent: answers[question.id] || "Not Answered", 
         };
       });
     });
@@ -203,7 +196,7 @@ const QuizForm =({ onComplete }) => {
   
     setResults(results);
     setShowResults(true);
-    console.log(results); // For debugging purposes
+    console.log(results);
   };
 
   if (error) return <div className="p-4 text-red-500">{error}</div>;
@@ -218,7 +211,7 @@ const QuizForm =({ onComplete }) => {
     <div className=" mx-auto px-4 py-8">
     <div>
     {showResults && results ? (
-       <Results results={results} onClose={handleCloseResults} />
+       <Results results={results}/>
     ) : (
       <div className="space-y-6 max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
       <div className="space-y-4">
