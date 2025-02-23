@@ -44,7 +44,7 @@ function Analytics() {
     <div className="mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-6 dark:text-white">Analytics Page</h1>
       <div className='flex justify-between gap-2 overflow-y-hidden mb-10'>
-        <div className='w-1/2 mx-auto'>
+        <div className='w-1/2 h-[420px] mx-auto'>
           <AnalyticsChart />
         </div>
         <div

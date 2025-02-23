@@ -61,13 +61,13 @@ const OnboardingFlow = ({ onComplete }) => {
         strengths: formData.academics.strengths.split(","),
         weaknesses: formData.academics.weaknesses.split(","),
         favoriteSubjects: formData.academics.favoriteSubjects.split(","),
-        currentGrades: formData.academics.currentGrades,
+        currentGrades: formData.academics.currentGrades.split(","),
       },
       careerMotivation: formData.careerGoals.reasonForChoice,
     };
     const studentProfileJSON = JSON.stringify(studentProfile, null, 2);
     const assessmentPlan = await generateAssessmentPlan(studentProfileJSON);
-    localStorage.setItem("studentProfile" + studentProfile.name, JSON.stringify(studentProfileJSON));
+    localStorage.setItem("studentProfile" + studentProfile.name, studentProfileJSON);
     localStorage.setItem("assessmentPlan" + studentProfile.name, JSON.stringify(assessmentPlan));
     onComplete();
   };
