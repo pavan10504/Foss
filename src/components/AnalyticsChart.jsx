@@ -3,7 +3,6 @@ import { Bar } from 'react-chartjs-2';
 import { useTheme } from './theme';
 import Chart from 'chart.js/auto';
 import { useUser } from '@clerk/clerk-react';
-
 function AnalyticsChart() {
   const { darkMode } = useTheme();
   const { user } = useUser();
@@ -13,39 +12,30 @@ function AnalyticsChart() {
     const storedProfile = localStorage.getItem('studentProfile'+user.firstName);
     if (storedProfile) {
       const profile = JSON.parse(storedProfile);
-      console.log(localStorage.getItem('studeProfile'+user.firstName));
-
-      console.log("🔍 Full Profile:", profile);
-    console.log("📌 Keys in Profile:", Object.keys(profile));
-    console.log("🔎 academicProfile:", profile.academicProfile);
-      if (!profile.academicProfile?.currentGrades) {
-        console.warn("No academicProfile or currentGrades found.");
-        setChartData({ labels: [], datasets: [] });
-        return;
-      }
-
-      let grades = profile.academicProfile.currentGrades;
-
+      let grades = profile.academicProfile?.currentGrades;
+      
       if (Array.isArray(grades)) {
         // Join array into a string, then process it
         grades = grades.join(', ');
       }
-
+      
       if (typeof grades === 'string') {
-        // Convert "subject-score" format into an object
-        const gradeEntries = grades.split(/,\s*|\n/).map(entry => entry.split('-').map(item => item.trim()));
+        // Convert the string format "subject-score" into an object
+        const gradeEntries = grades.split(/,\s*|\n/)
+          .map(entry => entry.split('-').map(item => item.trim()))
+          .filter(entry => entry.length === 2 && !isNaN(entry[1])); // Remove invalid entries
 
         grades = Object.fromEntries(gradeEntries);
       }
-
+      
       if (!grades || Object.keys(grades).length === 0) {
         setChartData({ labels: [], datasets: [] });
         return;
       }
-
+      
       const labels = Object.keys(grades);
       const scores = Object.values(grades).map(score => parseInt(score, 10) || 0);
-
+      
       setChartData({
         labels,
         datasets: [
@@ -105,7 +95,11 @@ function AnalyticsChart() {
       {chartData.labels.length > 0 ? (
         <Bar options={options} data={chartData} />
       ) : (
+        <div className='flex flex-row gap-2 items-center'>
+
         <p className="text-gray-600 dark:text-gray-400">No data available</p>
+        <p className='text-xl text-blue-500 font-bold dark:text-gray-400'>{user.firstName}</p>
+        </div>
       )}
     </div>
   );
