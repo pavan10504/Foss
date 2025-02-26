@@ -1,5 +1,5 @@
 ﻿import { Link, useLocation } from 'react-router-dom';
-import { Home, BookOpen, Gamepad, User, BarChart, Bot ,SettingsIcon,Route, AlarmClockPlus } from 'lucide-react';
+import { Home, BookOpen, Gamepad, User, BarChart, Bot ,SettingsIcon,Route, AlarmClockPlus, ChartAreaIcon } from 'lucide-react';
 
 
 const navItems = [
@@ -9,6 +9,7 @@ const navItems = [
   { icon: BarChart, label: 'Analytics', path: '/analytics' },
   { icon: Bot, label: 'Chatbot', path: '/chatbot' },
   { icon:Route,label:'Roadmap',path:'/roadmap'},
+  { icon:ChartAreaIcon,label:'Trends',path:'/trends'},
   {icon:AlarmClockPlus,label:'Pomodoro',path:'/pomodoro'},
   { icon: SettingsIcon, label: 'Profile', path: '/profile', isLast: true }, 
 
